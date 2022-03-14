@@ -1,0 +1,24 @@
+* Enter keywords in queries in lowercase only
+
+* command should end with semicolon
+
+* primary key is compulsory
+
+
+* SCHEMA FILE : 
+    - Will contain metadata
+
+    - ###
+      Students
+      rollno int
+      name varchar
+      ###
+      Teacher
+      id int
+      ###
+
+
+* Commands  :
+
+    1.  create table students ( rollno int , )
+

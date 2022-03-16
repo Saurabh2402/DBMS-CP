@@ -1,0 +1,24 @@
+Schema File :
+
+        *Student*
+        <<
+        roll int
+        name varchar 20
+        percent decimal 4 2
+        >>
+
+        *Teacher*
+        <<
+        id int
+        name varchar 30
+        >>
+
+
+* Commands  :
+
+    1. CREATE TABLE:
+
+        create table Student(roll int, name varchar(20), dob date, percent decimal(4,2));
+        create table Teacher(id int,name varchar(30),addr varchar(50),phno int);
+        create table Peons(id int, name varchar(30), addr varchar(50),doj date);
+        create table Peons(id int, name varchar(30), primary key(id));

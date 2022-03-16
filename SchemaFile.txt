@@ -1,0 +1,24 @@
+*Teacher*
+<<
+id int
+name varchar 30
+addr varchar 50
+phno int
+>>
+
+*Peons*
+<<
+id int
+name varchar 30
+addr varchar 50
+doj date
+>>
+
+*Student*
+<<
+roll int
+name varchar 20
+dob date
+percent decimal 4 2
+>>
+

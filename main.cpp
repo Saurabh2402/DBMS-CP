@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "functions.cpp"
 using namespace std;
 
 vector<string>Tokens;
@@ -6,22 +7,12 @@ vector<string>Tokens;
 void DisplayTokens()
 {
     for(string x:Tokens)
-        cout<<x<<",";
+        cout<<x<<endl;
 }
 
 void ParseIntoTokens(string Query)
 {
-    //Dipak's Code
-    /*
-    stringstream space(Query);
-    string i;
-
-    while(getline(space,i,' '))
-        Tokens.push_back(i);
-    */
-
-
-   //Saurabh's Code
+    
     string temp="";
 
     for(char c:Query)
@@ -30,8 +21,8 @@ void ParseIntoTokens(string Query)
         {
             if(temp!="")
                 Tokens.push_back(temp);
-            if(c!=' ')
-                Tokens.push_back(string(1,c));
+            /*if(c!=' ')
+                Tokens.push_back(string(1,c));*/
             
             temp = "";
         }
@@ -46,11 +37,15 @@ void ParseIntoTokens(string Query)
 
 void Execute()
 {
-    
+    if(Tokens.empty())
+        return;
+
     if(Tokens[0]=="create" && Tokens[1]=="table") 
     {
-        cout<<"== create table"<<endl;
+        CreateTable(Tokens);
     }
+
+    /*
     else if(Tokens[0]=="drop" && Tokens[1]=="table")
     {
         cout<<"== drop table"<<endl;
@@ -88,6 +83,11 @@ void Execute()
     {
         cout<<"== quit"<<endl;
         exit(0);
+    }*/
+    
+    else
+    {
+        cout<<"INVALID QUERY"<<endl;
     }
     
 }
@@ -103,10 +103,10 @@ int main()
         cout<<endl<<">> ";
 
         getline(cin,Query);
-        
+        cout<<endl;
         ParseIntoTokens(Query);
-        DisplayTokens();
-        //Execute();  
+        //DisplayTokens();
+        Execute();  
     }
     
     return 0;

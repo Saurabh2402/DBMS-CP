@@ -4,6 +4,9 @@
 
 * primary key is compulsory
 
+* Different Files for different tables
+
+create table Students(id int,name varchar2,percentage float);
 
 * SCHEMA FILE : 
     - Will contain metadata
@@ -13,12 +16,50 @@
       rollno int
       name varchar
       ###
-      Teacher
+      Teachers
       id int
       ###
+
+Students.txt
+101 Dipak 98
+102 Shabbir 82
+103 Shabbir 88
+104 Pratahemsh 99
+106 Saurbah 56
+
+select id,name from students;
+
+id = 0
+name = 1
+
+
+2D ARRAY
+0    1   2   3   4      ....
+##c1
+101 103 105 111 120
+##c1
+
+##c2
+Shabbir Saurabh Pratahemsh Shriraj Dipak    
+##c2
+
+##c3
+99 88 54 93 20 
+##c3
+
+
+Insert into students values(109,Raj,50)
+
+
+Teachers.txt
+200 Saurabh
+
+
+select name from students;
+
 
 
 * Commands  :
 
-    1.  create table students ( rollno int , )
+    1.  create table students(rollno int , name varchar2);
 

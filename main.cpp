@@ -12,20 +12,36 @@ void DisplayTokens()
 
 void ParseIntoTokens(string Query)
 {
-    
     string temp="";
 
-    for(char c:Query)
+    for(int i=0;i<Query.size();i++)
     {
+        char c = Query[i];
+
         if(c==' ' || c=='(' || c==')' || c==',' || c==';')
         {
             if(temp!="")
                 Tokens.push_back(temp);
-            /*if(c!=' ')
-                Tokens.push_back(string(1,c));*/
-            
             temp = "";
         }
+        else if(Query[i]=='!' && Query[i+1]=='=')
+        {
+            if(temp!="")
+                Tokens.push_back(temp);
+            temp = "";
+
+            Tokens.push_back("!=");
+            i++;
+        }
+        else if(c=='<' || c=='>'|| c=='=')//OR other operators
+        {
+            if(temp!="")
+                Tokens.push_back(temp);
+            temp = "";
+
+            Tokens.push_back(string(1,c));
+        }
+        
         else 
         {
             temp += c; 

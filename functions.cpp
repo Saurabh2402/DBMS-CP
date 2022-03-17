@@ -9,7 +9,6 @@ void CreateTable(vector<string>&Tokens)
         SchemaFile.open("SchemaFile.txt",ios::in);
         if(SchemaFile)
         {
-            
             string TableNameInQuery = Tokens[2];
             string line;
 
@@ -38,11 +37,12 @@ void CreateTable(vector<string>&Tokens)
         SchemaFile.open("SchemaFile.txt",ios::app);
 
         SchemaFile << "*" << Tokens[2] << "*" << endl << "<<" << endl;
-    
+        SchemaFile << "pk: " << Tokens.back() << endl;
+
         int i = 3;
-        while(i<Tokens.size())
+        while(i<Tokens.size()-3)
         {
-            SchemaFile << Tokens[i] <<" ";
+            SchemaFile << Tokens[i] << " ";
 
             if(Tokens[i+1]=="varchar")
                 {SchemaFile << Tokens[i+1] << " " << Tokens[i+2];  i+=3;}
@@ -54,6 +54,18 @@ void CreateTable(vector<string>&Tokens)
             {
                 SchemaFile << Tokens[i+1];
                 i+=2;
+            }
+            if(Tokens[i]=="check")
+            {
+                SchemaFile <<" " << Tokens[i] << " " ;
+                SchemaFile << Tokens[i+1] << " " << Tokens[i+2] << " " << Tokens[i+3] ;
+                i+=4;
+                while(Tokens[i]=="AND" || Tokens[i]=="OR")
+                {
+                    SchemaFile <<" " << Tokens[i] << " " ;
+                    SchemaFile << Tokens[i+1] << " " << Tokens[i+2] << " " << Tokens[i+3] ;
+                    i+=4;
+                }
             }
             SchemaFile << endl;
 

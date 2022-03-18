@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "functions.cpp"
+#include "HelpCommands.cpp"
 using namespace std;
 
 vector<string>Tokens;
@@ -57,25 +58,26 @@ void Execute()
         return;
 
     if(Tokens[0]=="create" && Tokens[1]=="table") 
-    {
-        CreateTable(Tokens);
-    }
+    {CreateTable(Tokens);}
 
-    /*
     else if(Tokens[0]=="drop" && Tokens[1]=="table")
-    {
-        cout<<"== drop table"<<endl;
-    }
+    {DropTable(Tokens);}
+
     else if(Tokens[0]=="describe")
-    {
-        cout<<"== describe"<<endl;
-    }
-    else if(Tokens[0]=="insert" && Tokens[0]=="into")
+    {DescribeTable(Tokens);}
+
+    else if(Tokens[0]=="help" && Tokens[1]=="tables")
+    {HelpTables();}
+
+    else if(Tokens[0]=="help")
+    {HelpCommand(Tokens);}
+
+    else if(Tokens[0]=="insert" && Tokens[1]=="into")
     {
         cout<<"== insert into"<<endl;
     }
     
-    else if(Tokens[0]=="delete" && Tokens[0]=="from")
+    else if(Tokens[0]=="delete" && Tokens[1]=="from")
     {
         cout<<"== delete from"<<endl;
     }
@@ -87,20 +89,13 @@ void Execute()
     {
         cout<<"== create table"<<endl;
     }
-    else if(Tokens[0]=="help" && Tokens[0]=="tables")
-    {
-        cout<<"== help tables"<<endl;
-    }
-    else if(Tokens[0]=="help")
-    {
-        cout<<"== help cmd"<<endl;
-    }
+    
+    
     else if(Tokens[0]=="quit")
     {
         cout<<"== quit"<<endl;
         exit(0);
-    }*/
-    
+    }
     else
     {
         cout<<"INVALID QUERY"<<endl;

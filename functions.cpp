@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-
 using namespace std;
+
+
 void CreateTable(vector<string>&Tokens)
 {
     //Check whether table with specified name exists in Schema file or not
@@ -70,7 +71,7 @@ void CreateTable(vector<string>&Tokens)
             SchemaFile << endl;
 
         }
-        SchemaFile << ">>" << endl << endl;
+        SchemaFile << ">>" << endl <<endl;
         SchemaFile.close();
 
         cout << "Table Created Successfully"<<endl;
@@ -78,17 +79,105 @@ void CreateTable(vector<string>&Tokens)
     }
         
 }
-    
+void delete_last_line()
+{   
+    ifstream fileIn( "SchemaFile.txt" );                   // Open for reading
 
-int dropTable()
-{
-    cout<<"drop";
-    return 0;
+    stringstream buffer;                             // Store contents in a std::string
+    buffer << fileIn.rdbuf();
+    string contents = buffer.str();
+
+    fileIn.close();
+    contents.pop_back();                                  // Remove last character
+
+
+    ofstream fileOut( "SchemaFile.txt" , ios::trunc); // Open for writing (while also clearing file)
+    fileOut << contents;                                  // Output contents with removed character
+    fileOut.close(); 
 }
+void DropTable(vector<string>&Tokens)
+{
+    //drop table Students;
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+    if(!SchemaFile)
+        {cout<<"Schema File does not exists!"<<endl;return;}
+    
+    fstream temp;
+    temp.open("temp.txt",ios::out);
+
+    bool hasDropped = false;
+    
+    string line;
+    while(!SchemaFile.eof())
+    {
+        getline(SchemaFile,line);
+        if(line[0]=='*' && line.substr(1,line.size()-2)==Tokens[2])// *Teacher*
+        {
+            while(line!=">>")
+                getline(SchemaFile,line);
+
+            getline(SchemaFile,line);
+            getline(SchemaFile,line);
+            
+            hasDropped = true;
+        }
+        
+        temp << line << endl;
+    }
+    if(hasDropped)
+        cout<<"<"<<Tokens[2]<<"> Dropped Successfully"<<endl;
+    else
+        cout<<"<"<<Tokens[2]<<"> Not Found"<<endl;
+
+    
+    temp.close();
+    SchemaFile.close();
+    remove("SchemaFile.txt");
+    rename("temp.txt","SchemaFile.txt");
+
+   
+    delete_last_line();
+}
+
+void DescribeTable(vector<string>&Tokens)
+{
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+
+    if(!SchemaFile)
+        {cout<<"Schema File does not exists!"<<endl;return;}
+
+    bool found=false;
+    string line;
+    while(!SchemaFile.eof())
+    {
+        getline(SchemaFile,line);
+        if(line[0]=='*' && line.substr(1,line.size()-2)==Tokens[1])// *Teacher*
+        {
+            getline(SchemaFile,line);
+            while(1)
+            {
+                getline(SchemaFile,line);
+                if(line==">>")
+                    break;
+                cout<<line<<endl;
+            }
+            found = true;
+            break;
+        }
+        
+    }
+    if(!found)
+        cout<<"<"<<Tokens[1]<<"> Table does not exists"<<endl;
+
+}
+
+
+
 
 int updateTable()
 {
-
     return 0;
 }
 int selectFromTable()

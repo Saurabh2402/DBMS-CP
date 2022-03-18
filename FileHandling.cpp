@@ -1,33 +1,58 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
-
-int main()
+void Delete(fstream &file,string name)
 {
-    //Reading
-    system("cls");
-    fstream file;
-    file.open("dipak.txt");
+    fstream temp;
+    temp.open("temp.txt",ios::out);
 
     string line;
-
+    bool hasFound = false;
     while(!file.eof())
     {
-        getline(file,line);
-        cout<<"* : "<<line<<endl;
+       getline(file,line);
+       if(line==name)
+       {
+           hasFound = true;
+           continue;
+       }
+       temp << line << endl;
     }
+    if(hasFound)
+        cout<<"Name found"<<endl;
+    else
+        cout<<"Name not found"<<endl;
 
-    //Writing
-    //append endl explicityly before adding anything new to file
-    /*
-    fstream file;
-    file.open("tp.csv",ios::app);
-
-    string line = "Hello World3";
-    file<<endl;
-    file << line;
+    temp.close();
     file.close();
-    */
+    remove("names.txt");
+    rename("temp.txt","names.txt");
+}
+
+void Write()
+{
+    
+    
+}
+
+void remove_endl()
+{
+    fstream names;
+    names.open("names.txt",ios::in);
+
+    fstream temp;
+
+}
+int main()
+{
+    
+    system("cls");
+    
+    
+
+    //Delete Yash
+    //Delete(names,"Harsh");
+
+    remove_endl();
 
 }

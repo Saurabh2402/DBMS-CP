@@ -22,3 +22,7 @@ Schema File :
         create table Teacher(id int,name varchar(30),addr varchar(50),phno int,primary key(name));
         create table Student(roll int check(roll > 0), name varchar(20) check(name!="ABC"), dob date, percent decimal(4,2), primary key(roll));
         create table Peons(id int,sal int check(sal>5000 AND sal<20000), name varchar(30) check(name!=""), primary key(id));
+
+        create table Stud1(id int, primary key(id));
+        create table Stud2(id int, primary key(id));
+        create table Stud3(id int, primary key(id));

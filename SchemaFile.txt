@@ -1,26 +1,24 @@
-*Teacher*
-<<
-pk: name
-id int
-name varchar 30
-addr varchar 50
-phno int
->>
-
-*Student*
-<<
-pk: roll
-roll int check roll > 0
-name varchar 20 check name != "ABC"
-dob date
-percent decimal 4 2
->>
-
-*Peons*
+*Stud3*
 <<
 pk: id
 id int
-sal int check sal > 5000 AND sal < 20000
-name varchar 30 check name != ""
+>>
+
+*Stud4*
+<<
+pk: id
+id int
+>>
+
+*Stud99*
+<<
+pk: id
+id int
+>>
+
+*Stud100*
+<<
+pk: id
+id int
 >>
 

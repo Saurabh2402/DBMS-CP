@@ -12,8 +12,12 @@ void HelpTables()
     SchemaFile.open("SchemaFile.txt",ios::in);
 
     if(!SchemaFile)
-    {cout<<"No Tables Found"<<endl;return;}
+    {cout<<"Schema File not found"<<endl;return;}
     
+    
+    if(SchemaFile.peek()==-1)
+    {cout<<"No tables found"<<endl;return;}
+
     cout<<"Tables in the database are : "<<endl;
     string line;
     while(!SchemaFile.eof())

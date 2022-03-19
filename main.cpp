@@ -18,8 +18,20 @@ void ParseIntoTokens(string Query)
     for(int i=0;i<Query.size();i++)
     {
         char c = Query[i];
-
-        if(c==' ' || c=='(' || c==')' || c==',' || c==';')
+        if(c=='"')
+        {
+            i++;
+            while(Query[i]!='"')
+            {
+                temp+=Query[i];
+                i++;
+            }
+            
+            if(temp!="")
+                Tokens.push_back(temp);
+            temp = "";
+        }
+        else if(c==' ' || c=='(' || c==')' || c==',' || c==';')
         {
             if(temp!="")
                 Tokens.push_back(temp);
@@ -74,7 +86,7 @@ void Execute()
 
     else if(Tokens[0]=="insert" && Tokens[1]=="into")
     {
-        cout<<"== insert into"<<endl;
+        InsertInto(Tokens);
     }
     
     else if(Tokens[0]=="delete" && Tokens[1]=="from")

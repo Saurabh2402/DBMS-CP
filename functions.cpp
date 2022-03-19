@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include<regex>
 using namespace std;
 
 
@@ -79,6 +80,7 @@ void CreateTable(vector<string>&Tokens)
     }
         
 }
+
 void delete_last_line()
 {   
     ifstream fileIn( "SchemaFile.txt" );                   // Open for reading
@@ -173,20 +175,84 @@ void DescribeTable(vector<string>&Tokens)
 
 }
 
-
-
-
-int updateTable()
+string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
 {
-    return 0;
+    //tuple = <103,Saurabh Yelmame,24-02-2001>
+    int comma=0;
+    int i=1;
+    while(comma<colno)
+    {
+        if(tuple[i]==',')
+            comma++;
+        i++;
+    }
+    
+    string pk="";
+    while(tuple[i]!=','&& tuple[i]!='>')
+    {
+        pk+=tuple[i];
+        i++;
+    }
+    //cout<<"pk: "<<pk<<endl;
+    return pk;
 }
-int selectFromTable()
+void InsertInto(vector<string>&Tokens)
 {
+    ifstream SchemaFile("SchemaFile.txt");
+    if(!SchemaFile)
+    {cout<<"SchemaFile doesn't exists"<<endl;return;}
 
-    return 0;
-}
-int deletetFromTable()
-{
+    //1. Checking whether the table exists in the Schema File or not
+    string line;
+    bool doesExist = false;
+    while(!SchemaFile.eof())
+    {
+        getline(SchemaFile,line);
+        if(line[0]=='*' && line.substr(1,line.size()-2)==Tokens[2])
+        {
+            doesExist = true;
+            break;
+        }
+    }
+    if(!doesExist)//does not exists
+    {cout<<"<"<<Tokens[2]<<"> table does not exists"<<endl;return;}
+    
+    //cout<<"Table exists in schema file"<<endl;
 
-    return 0;
+    //If control comes here, means the specified table exists in schema file;
+    
+    //1.Checking whether primary key already exists in the table or not
+    fstream table;
+    table.open(Tokens[2]+".txt",ios::in);
+    string tuple;
+    while(!table.eof())
+    {
+        getline(table,tuple);
+
+        if(Tokens[4]==ExtractCol(tuple,0))//0 means primary key
+        {cout<<"PK already exists"<<endl;return;}
+    }
+    table.close();
+
+
+
+    //2.If the control comes here, means primary key doesn't exits
+    //  And we can append the tuple;
+    fstream TABLE;
+    TABLE.open(Tokens[2]+".txt",ios::app);
+    TABLE <<"<";
+
+    int i=4;
+    while(i<Tokens.size()-1)
+    {
+        TABLE << Tokens[i] <<",";
+        i++;
+    }
+    TABLE << Tokens[i] << ">" << endl;
+
+    TABLE.close();
+    SchemaFile.close();
+
+    cout<<"Tuple inserted successfully"<<endl;
+    
 }

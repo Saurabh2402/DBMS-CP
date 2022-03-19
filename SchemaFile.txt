@@ -1,24 +1,8 @@
-*Stud3*
+*Students*
 <<
 pk: id
 id int
->>
-
-*Stud4*
-<<
-pk: id
-id int
->>
-
-*Stud99*
-<<
-pk: id
-id int
->>
-
-*Stud100*
-<<
-pk: id
-id int
+name varchar 30
+dob date
 >>
 

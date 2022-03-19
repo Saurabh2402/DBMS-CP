@@ -43,16 +43,41 @@ void remove_endl()
     fstream temp;
 
 }
+string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
+{
+    //tuple = <103,Saurabh Yelmame,24-02-2001>
+    int comma=0;
+    int i=1;
+    while(comma<colno)
+    {
+        if(tuple[i]==',')
+            comma++;
+        i++;
+    }
+    
+    string pk="";
+    
+    while(tuple[i]!=','&& tuple[i]!='>')
+    {
+        pk+=tuple[i];
+        i++;
+    }
+        
+    
+    //cout<<"pk: "<<pk<<endl;
+    return pk;
+}
 int main()
 {
     
     system("cls");
     
-    
+    string s = "<103,Shabbir Asgar,28-07-2001>";
+    cout<<"extracted: "<<ExtractCol(s,2)<<endl;
 
     //Delete Yash
     //Delete(names,"Harsh");
 
-    remove_endl();
+    //remove_endl();
 
 }

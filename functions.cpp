@@ -196,6 +196,7 @@ string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
     //cout<<"pk: "<<pk<<endl;
     return pk;
 }
+
 void InsertInto(vector<string>&Tokens)
 {
     ifstream SchemaFile("SchemaFile.txt");

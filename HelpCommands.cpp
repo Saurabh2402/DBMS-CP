@@ -42,7 +42,7 @@ void HelpCommand(vector<string> Tokens)
         cout<<"SYNTAX : ";
         cout<<"drop table table_name;"<<endl;
         cout<<"Eg -"<<endl;
-        cout<<"drop table Students;"<<endl;
+        cout<<"drop table Students;";
     }
 
     else if(Tokens[1]=="insert")
@@ -60,7 +60,7 @@ void HelpCommand(vector<string> Tokens)
         cout<<"SYNTAX : ";
         cout<<"select attribute_list from table _list where condition_list"<<endl; 
         cout<<"Eg -"<<endl;
-        cout<<"select name,dob from Students where percent>85.00"<<endl;
+        cout<<"select name,dob from Students where percent>85.00";
     }
      
     else if(Tokens[1]=="delete")
@@ -69,7 +69,7 @@ void HelpCommand(vector<string> Tokens)
         cout<<"SYNTAX : ";
         cout<<"delete from table_name where condition_list ;"<<endl;
         cout<<"Eg -"<<endl;
-        cout<<"delete from Students where percent<40.00"<<endl;
+        cout<<"delete from Students where percent<40.00";
     }
 
     else if(Tokens[1]=="update")

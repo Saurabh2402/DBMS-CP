@@ -1,8 +1,18 @@
 *Students*
 <<
-pk: id
+pk: roll
+roll int check roll > 0
+name varchar 20 check name != ABC
+dob date
+percent decimal 4 2
+>>
+
+*Teacher*
+<<
+pk: name
 id int
 name varchar 30
-dob date
+addr varchar 50
+phno int
 >>
 

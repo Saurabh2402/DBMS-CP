@@ -18,6 +18,7 @@ void ParseIntoTokens(string Query)
     for(int i=0;i<Query.size();i++)
     {
         char c = Query[i];
+
         if(c=='"')
         {
             i++;
@@ -31,10 +32,12 @@ void ParseIntoTokens(string Query)
                 Tokens.push_back(temp);
             temp = "";
         }
-        else if(c==' ' || c=='(' || c==')' || c==',' || c==';')
+        else if(c==' ' || c=='(' || c==')' || c==',' || c==';' || c=='*')
         {
             if(temp!="")
                 Tokens.push_back(temp);
+            if(c=='*')//for handling special case in select
+                Tokens.push_back("*");
             temp = "";
         }
         else if(Query[i]=='!' && Query[i+1]=='=')
@@ -85,9 +88,10 @@ void Execute()
     {HelpCommand(Tokens);}
 
     else if(Tokens[0]=="insert" && Tokens[1]=="into")
-    {
-        InsertInto(Tokens);
-    }
+    {InsertInto(Tokens);}
+
+    else if(Tokens[0]=="select")
+    {Select(Tokens);}
     
     else if(Tokens[0]=="delete" && Tokens[1]=="from")
     {
@@ -97,15 +101,12 @@ void Execute()
     {
         cout<<"== update"<<endl;
     }
-    else if(Tokens[0]=="select")
-    {
-        cout<<"== create table"<<endl;
-    }
+    
     
     
     else if(Tokens[0]=="quit")
     {
-        cout<<"== quit"<<endl;
+        cout<<"Program terminated successfully."<<endl;
         exit(0);
     }
     else

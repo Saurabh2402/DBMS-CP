@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include<regex>
 using namespace std;
 
 
@@ -175,6 +174,43 @@ void DescribeTable(vector<string>&Tokens)
 
 }
 
+int Count_no_Attributes(string TableName)
+{
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+    int attributes=0;
+
+    if(SchemaFile)
+    {
+        string line;
+
+        while(!SchemaFile.eof())
+        {
+            getline(SchemaFile,line);
+            if(line[0]=='*')
+            {
+                string name = line.substr(1,line.size()-2);
+                if(name==TableName)
+                {
+                    getline(SchemaFile,line);//<<
+                    getline(SchemaFile,line);//pk:
+
+                    while(line!=">>")
+                    {
+                        attributes++;
+                        getline(SchemaFile,line);
+                    }
+                    return attributes-1;
+                }
+            }
+        }
+    }
+    else
+    cout<<"Schema File not found"<<endl;
+
+    return 0;
+
+}
 string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
 {
     //tuple = <103,Saurabh Yelmame,24-02-2001>
@@ -186,6 +222,7 @@ string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
             comma++;
         i++;
     }
+    
     
     string pk="";
     while(tuple[i]!=','&& tuple[i]!='>')
@@ -224,14 +261,18 @@ void InsertInto(vector<string>&Tokens)
     
     //1.Checking whether primary key already exists in the table or not
     fstream table;
+    
     table.open(Tokens[2]+".txt",ios::in);
     string tuple;
-    while(!table.eof())
+    string temp = Tokens[2]+".txt";
+    
+    while(table && !table.eof())
     {
         getline(table,tuple);
 
         if(Tokens[4]==ExtractCol(tuple,0))//0 means primary key
         {cout<<"PK already exists"<<endl;return;}
+        
     }
     table.close();
 
@@ -257,3 +298,154 @@ void InsertInto(vector<string>&Tokens)
     cout<<"Tuple inserted successfully"<<endl;
     
 }
+
+vector<int> Find_Indices(vector<string>&Tokens,vector<string> attributes_of_table)
+{
+    vector<int> indices_of_att_in_query;
+    for(int i=1;Tokens[i]!="from";i++)
+    {
+        bool flag=true;
+        for(int j=0;flag && j<attributes_of_table.size();j++)
+            if(Tokens[i]==attributes_of_table[j])
+            {
+                indices_of_att_in_query.push_back(j);
+                flag=false;
+            }
+    }
+
+    return indices_of_att_in_query;
+}
+
+void Helper_Select(vector<string>&Tokens,string TableNameInQuery)
+{
+    //cout<<"Table exists"<<endl;
+    if(Tokens[1]=="*")
+    {
+        fstream file;
+        file.open(TableNameInQuery+".txt",ios::in);
+        int attributes = Count_no_Attributes(TableNameInQuery);
+        //cout<<"COUNT of attributes : "<<attributes<<endl;
+        bool flag=false;
+        string tuple;
+        while(file && !file.eof())
+        {
+            flag=true;
+            getline(file,tuple);//<102,Dipak Yadav,99>
+            if(tuple.size()==0)break;
+
+            for(int i=0;i<attributes;i++)
+                cout<<left<<setw(25)<<ExtractCol(tuple,i);
+            cout<<endl;
+            
+        }
+        if(!flag)
+            cout<<"File doesnot exists!"<<endl;
+    }
+
+    else
+    {
+        vector<string> attributes_of_table;
+
+        fstream SchemaFile;
+        SchemaFile.open("SchemaFile.txt",ios::in);
+        string line;
+        while(!SchemaFile.eof())
+        {
+            getline(SchemaFile,line);
+            if(line[0]=='*')
+            {
+                string name = line.substr(1,line.size()-2);
+                if(name==TableNameInQuery)
+                {
+                    getline(SchemaFile,line);//<<
+                    getline(SchemaFile,line);//pk: 
+
+                    while(line!=">>")
+                    {
+                        getline(SchemaFile,line);
+                        if(line==">>")break;
+
+                        string temp="";
+                        int i=0;
+                        while(line[i]!=' ')
+                        {
+                            temp += line[i];
+                            i++;
+                        }
+                            
+                        attributes_of_table.push_back(temp);
+                    }
+                    SchemaFile.close();
+                    break;
+                }
+            }
+        }
+
+        vector<int>indices_of_att_in_query = Find_Indices(Tokens,attributes_of_table);
+
+        fstream file;
+        file.open(TableNameInQuery+".txt",ios::in);
+        
+        bool flag=false;
+        string tuple;
+
+        while(file && !file.eof())
+        {
+            flag=true;
+            getline(file,tuple);//<102,Dipak Yadav,99>
+            if(tuple.size()==0)break;
+
+            for(int x:indices_of_att_in_query)
+                cout<<left<<setw(25)<<ExtractCol(tuple,x);
+            cout<<endl;
+            
+        }
+        if(!flag)
+            cout<<"File doesnot exists!"<<endl;
+
+
+    }
+
+}
+
+void Select(vector<string>&Tokens)
+{
+    int i=0;
+    while(Tokens[i]!="from") i++;
+    i++;
+
+    //Check whether table with specified name exists in Schema file or not
+    {
+        fstream SchemaFile;
+        SchemaFile.open("SchemaFile.txt",ios::in);
+        if(SchemaFile)
+        {
+            string TableNameInQuery = Tokens[i];
+            string line;
+            bool flag=false;
+            while(!SchemaFile.eof())
+            {
+                getline(SchemaFile,line);
+                if(line[0]=='*')
+                {
+                    string name = line.substr(1,line.size()-2);
+                    if(name==TableNameInQuery)
+                    {
+                        flag=true;
+                        SchemaFile.close();
+                        //if control comes here, means the table exists in the Schema File
+                        Helper_Select(Tokens,TableNameInQuery);
+                    }
+                }
+            }
+            if(flag==false)
+                cout<<"<"<<TableNameInQuery<<"> table not found"<<endl;
+        }
+    }
+      
+
+}
+
+
+
+

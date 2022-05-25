@@ -48,5 +48,6 @@ Schema File :
 
         select * from Students;
         select id,name,roll from Students;
+        
         select name,id from Students where id>103;
         select id,name from Students where marks>50 and marks<70;

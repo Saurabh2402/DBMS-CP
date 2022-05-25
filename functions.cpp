@@ -301,6 +301,11 @@ void InsertInto(vector<string>&Tokens)
 
 vector<int> Find_Indices(vector<string>&Tokens,vector<string> attributes_of_table)
 {
+    //          0  1    2      3    4
+    //Schema : id name gender mob email 
+    
+    //Query  : select name,id,email form Students where id>100;
+
     vector<int> indices_of_att_in_query;
     for(int i=1;Tokens[i]!="from";i++)
     {
@@ -426,7 +431,7 @@ void Select(vector<string>&Tokens)
             while(!SchemaFile.eof())
             {
                 getline(SchemaFile,line);
-                if(line[0]=='*')
+                if(line[0]=='*')//*Students*
                 {
                     string name = line.substr(1,line.size()-2);
                     if(name==TableNameInQuery)

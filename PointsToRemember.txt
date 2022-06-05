@@ -59,7 +59,3 @@ select name from students;
 
 
 
-* Commands  :
-
-    1.  create table students(rollno int , name varchar2);
-

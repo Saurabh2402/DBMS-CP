@@ -1,36 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
+vector<string> attributes_of_table;
 
-
-void CreateTable(vector<string>&Tokens)
+bool doesTableExists2(string tableName)
 {
-    //Check whether table with specified name exists in Schema file or not
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+    if(SchemaFile)
     {
-        fstream SchemaFile;
-        SchemaFile.open("SchemaFile.txt",ios::in);
-        if(SchemaFile)
+        string line;
+        while(!SchemaFile.eof())
         {
-            string TableNameInQuery = Tokens[2];
-            string line;
-
-            while(!SchemaFile.eof())
+            getline(SchemaFile,line);
+            if(line[0]=='*')
             {
-                getline(SchemaFile,line);
-                if(line[0]=='*')
+                string name = line.substr(1,line.size()-2);
+                if(name==tableName)
                 {
-                    string name = line.substr(1,line.size()-2);
-                    if(name==TableNameInQuery)
-                    {
-                        cout<<"Table <"<<TableNameInQuery<<"> already exists"<<endl;
-                        SchemaFile.close();
-                        return;
-                    }
+                    SchemaFile.close();
+                    return true;
                 }
             }
         }
     }
-        
+    else
+        cout<<"Schema File doesn't exists"<<endl;
+    return false;
+}
 
+void CreateTable(vector<string>&Tokens)
+{
     //If control comes here means, table with specified name doesn't exists
     //So, Append the name of table and its attribute to schema file
     {
@@ -101,13 +100,9 @@ void DropTable(vector<string>&Tokens)
     //drop table Students;
     fstream SchemaFile;
     SchemaFile.open("SchemaFile.txt",ios::in);
-    if(!SchemaFile)
-        {cout<<"Schema File does not exists!"<<endl;return;}
     
     fstream temp;
     temp.open("temp.txt",ios::out);
-
-    bool hasDropped = false;
     
     string line;
     while(!SchemaFile.eof())
@@ -121,22 +116,20 @@ void DropTable(vector<string>&Tokens)
             getline(SchemaFile,line);
             getline(SchemaFile,line);
             
-            hasDropped = true;
         }
-        
         temp << line << endl;
     }
-    if(hasDropped)
-        cout<<"<"<<Tokens[2]<<"> Dropped Successfully"<<endl;
-    else
-        cout<<"<"<<Tokens[2]<<"> Not Found"<<endl;
-
+    
+    cout<<"<"<<Tokens[2]<<"> Dropped Successfully"<<endl;
     
     temp.close();
     SchemaFile.close();
     remove("SchemaFile.txt");
     rename("temp.txt","SchemaFile.txt");
 
+    char tableName[30];
+    strcpy(tableName, (Tokens[2]+".txt").c_str());
+    remove(tableName);
    
     delete_last_line();
 }
@@ -146,10 +139,6 @@ void DescribeTable(vector<string>&Tokens)
     fstream SchemaFile;
     SchemaFile.open("SchemaFile.txt",ios::in);
 
-    if(!SchemaFile)
-        {cout<<"Schema File does not exists!"<<endl;return;}
-
-    bool found=false;
     string line;
     while(!SchemaFile.eof())
     {
@@ -164,18 +153,14 @@ void DescribeTable(vector<string>&Tokens)
                     break;
                 cout<<line<<endl;
             }
-            found = true;
             break;
-        }
-        
-    }
-    if(!found)
-        cout<<"<"<<Tokens[1]<<"> Table does not exists"<<endl;
-
+        }    
+    }    
 }
 
 int Count_no_Attributes(string TableName)
 {
+    //This function returns the number of attributes of the table-tableName
     fstream SchemaFile;
     SchemaFile.open("SchemaFile.txt",ios::in);
     int attributes=0;
@@ -183,7 +168,6 @@ int Count_no_Attributes(string TableName)
     if(SchemaFile)
     {
         string line;
-
         while(!SchemaFile.eof())
         {
             getline(SchemaFile,line);
@@ -209,7 +193,6 @@ int Count_no_Attributes(string TableName)
     cout<<"Schema File not found"<<endl;
 
     return 0;
-
 }
 string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
 {
@@ -234,34 +217,85 @@ string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
     return pk;
 }
 
-void InsertInto(vector<string>&Tokens)
+bool isInt(string s)
 {
-    ifstream SchemaFile("SchemaFile.txt");
-    if(!SchemaFile)
-    {cout<<"SchemaFile doesn't exists"<<endl;return;}
+    for(char c:s)
+        if(!isdigit(c))
+            return false;
+    return true;
+}
+int checkValuesOrder(vector<string>&Tokens)
+{
+    //Getting datatypes of table from Schema File
+    vector<string> datatypesInSchema;
+    string tableName = Tokens[2];
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
 
-    //1. Checking whether the table exists in the Schema File or not
     string line;
-    bool doesExist = false;
+    string word;
     while(!SchemaFile.eof())
     {
         getline(SchemaFile,line);
-        if(line[0]=='*' && line.substr(1,line.size()-2)==Tokens[2])
+        if(line[0]=='*' && line.substr(1,line.size()-2)==tableName)// *Teacher*
         {
-            doesExist = true;
-            break;
-        }
-    }
-    if(!doesExist)//does not exists
-    {cout<<"<"<<Tokens[2]<<"> table does not exists"<<endl;return;}
-    
-    //cout<<"Table exists in schema file"<<endl;
+            getline(SchemaFile,line);// <<
+            getline(SchemaFile,line);// pk: roll
+            while(1)
+            {
+                getline(SchemaFile,line);
+                if(line==">>") break;
 
+                istringstream ss(line);
+                ss >> word;
+                ss >> word;
+                datatypesInSchema.push_back(word);
+            }
+        }    
+    } 
+
+    //Getting Datatypes from values(...) in tokens
+    vector<string> datatypesInTokens;
+
+    int i=0;
+    while(Tokens[i]!="values")
+        i++;
+    i++;
+
+    for(;i<Tokens.size();i++)
+    {
+        if(isalpha(Tokens[i][0]))
+            datatypesInTokens.push_back("varchar");
+        else if(Tokens[i][2]=='-')
+            datatypesInTokens.push_back("date");
+        else if(isInt(Tokens[i]))
+            datatypesInTokens.push_back("int");
+        else
+            datatypesInTokens.push_back("decimal");
+    }
+
+    for(int i=0;i<datatypesInSchema.size();i++)
+        if(datatypesInSchema[i]!=datatypesInTokens[i])
+            return 0;
+    /*
+    cout<<"Schema datatypes: ";
+    for(auto x:datatypesInSchema)
+        cout<<x<<"  ";
+    cout<<endl;
+
+    cout<<"Tokens datatypes: ";
+    for(auto x:datatypesInTokens)
+        cout<<x<<"  ";
+    cout<<endl;
+    */
+    return 1;
+
+}
+int InsertInto(vector<string>&Tokens)
+{
     //If control comes here, means the specified table exists in schema file;
-    
     //1.Checking whether primary key already exists in the table or not
     fstream table;
-    
     table.open(Tokens[2]+".txt",ios::in);
     string tuple;
     string temp = Tokens[2]+".txt";
@@ -269,16 +303,26 @@ void InsertInto(vector<string>&Tokens)
     while(table && !table.eof())
     {
         getline(table,tuple);
-
         if(Tokens[4]==ExtractCol(tuple,0))//0 means primary key
-        {cout<<"PK already exists"<<endl;return;}
-        
+        {
+            cout<<"PK already exists"<<endl;
+            table.close();
+            return 0;
+        }
     }
-    table.close();
 
+    //error handling2 : Checking whether the values are specified according to the Schema..
+    int noOfAttributes = Count_no_Attributes(Tokens[2]);
+    if( Tokens.size()-4 < noOfAttributes )
+    {cout<<"Less Values Specified"<<endl;return 0;}
+        
+    if( Tokens.size()-4 > noOfAttributes )
+    {cout<<"More Values Specified"<<endl;return 0;}
+    
+    if(!checkValuesOrder(Tokens))
+    {cout<<"Values not specified in proper order"<<endl;return 0;}
 
-
-    //2.If the control comes here, means primary key doesn't exits
+    //3.If the control comes here, there are no errors
     //  And we can append the tuple;
     fstream TABLE;
     TABLE.open(Tokens[2]+".txt",ios::app);
@@ -293,9 +337,7 @@ void InsertInto(vector<string>&Tokens)
     TABLE << Tokens[i] << ">" << endl;
 
     TABLE.close();
-    SchemaFile.close();
-
-    cout<<"Tuple inserted successfully"<<endl;
+    return 1;
     
 }
 
@@ -321,15 +363,16 @@ vector<int> Find_Indices(vector<string>&Tokens,vector<string> attributes_of_tabl
     return indices_of_att_in_query;
 }
 
+//This helper is for NO Where clauses
 void Helper_Select(vector<string>&Tokens,string TableNameInQuery)
 {
-    //cout<<"Table exists"<<endl;
+    //select * from Students handled separately
     if(Tokens[1]=="*")
     {
         fstream file;
         file.open(TableNameInQuery+".txt",ios::in);
         int attributes = Count_no_Attributes(TableNameInQuery);
-        //cout<<"COUNT of attributes : "<<attributes<<endl;
+        
         bool flag=false;
         string tuple;
         while(file && !file.eof())
@@ -349,43 +392,6 @@ void Helper_Select(vector<string>&Tokens,string TableNameInQuery)
 
     else
     {
-        vector<string> attributes_of_table;
-
-        fstream SchemaFile;
-        SchemaFile.open("SchemaFile.txt",ios::in);
-        string line;
-        while(!SchemaFile.eof())
-        {
-            getline(SchemaFile,line);
-            if(line[0]=='*')
-            {
-                string name = line.substr(1,line.size()-2);
-                if(name==TableNameInQuery)
-                {
-                    getline(SchemaFile,line);//<<
-                    getline(SchemaFile,line);//pk: 
-
-                    while(line!=">>")
-                    {
-                        getline(SchemaFile,line);
-                        if(line==">>")break;
-
-                        string temp="";
-                        int i=0;
-                        while(line[i]!=' ')
-                        {
-                            temp += line[i];
-                            i++;
-                        }
-                            
-                        attributes_of_table.push_back(temp);
-                    }
-                    SchemaFile.close();
-                    break;
-                }
-            }
-        }
-
         vector<int>indices_of_att_in_query = Find_Indices(Tokens,attributes_of_table);
 
         fstream file;
@@ -408,47 +414,157 @@ void Helper_Select(vector<string>&Tokens,string TableNameInQuery)
         if(!flag)
             cout<<"File doesnot exists!"<<endl;
 
-
     }
-
 }
 
+bool is_Where_True(string tuple,vector<string>&Tokens,int i)
+{
+    //i is pointing to Students here;
+    i++;//After this inc i will point to where
+
+    int index=0;
+    for(auto x:attributes_of_table)
+    {
+        if(x==Tokens[i+1])//Tokens[i+1]==marks
+            break;
+        else
+            index++;
+    }
+    //after this index will be index of 'marks' in attributes_of_table
+
+    bool isFloat = isdigit(Tokens[i+3][0]);
+    
+    if(isFloat)//Floats
+    {   
+        float typecasted = stof(ExtractCol(tuple,index));
+        
+        if(Tokens[i+2]==">") {return typecasted > stof(Tokens[i+3]);}
+        if(Tokens[i+2]=="<") {return typecasted < stof(Tokens[i+3]);}
+        if(Tokens[i+2]=="=") {return typecasted == stof(Tokens[i+3]);}
+        if(Tokens[i+2]=="!=") {return typecasted != stof(Tokens[i+3]);}
+    }
+    else//Strings
+    {
+        if(Tokens[i+2]=="!=")     return ExtractCol(tuple,index) != (Tokens[i+3]);
+        else if(Tokens[i+2]=="=") return ExtractCol(tuple,index) == (Tokens[i+3]);
+    }
+}
+
+void Helper_Select_Where(vector<string>&Tokens,string TableNameInQuery,int i)
+{
+    if(Tokens[1]=="*")
+    {
+        fstream file;
+        file.open(TableNameInQuery+".txt",ios::in);
+        int attributes = Count_no_Attributes(TableNameInQuery);
+        //cout<<"COUNT of attributes : "<<attributes<<endl;
+        bool flag=false;
+        string tuple;
+        while(file && !file.eof())
+        {
+            flag=true;
+            getline(file,tuple);//<102,Dipak Yadav,99>
+            if(tuple.size()==0)break;
+
+            //cout<<"val:"<<Tokens[i]<<endl;
+            if(is_Where_True(tuple,Tokens,i))
+            {
+                
+                for(int j=0;j<attributes;j++)
+                    cout<<left<<setw(25)<<ExtractCol(tuple,j);
+                cout<<endl;
+            }
+        }
+        if(!flag)
+            cout<<"File doesnot exists!"<<endl;
+    }
+
+    else
+    {
+        vector<int>indices_of_att_in_query = Find_Indices(Tokens,attributes_of_table);
+
+        fstream file;
+        file.open(TableNameInQuery+".txt",ios::in);
+        
+        bool flag=false;
+        string tuple;
+
+        while(file && !file.eof())
+        {
+            flag=true;
+            getline(file,tuple);//<102,Dipak Yadav,99>
+            if(tuple.size()==0)break;
+            
+            if(is_Where_True(tuple,Tokens,i)){
+                for(int x:indices_of_att_in_query)
+                cout<<left<<setw(25)<<ExtractCol(tuple,x);
+                cout<<endl;
+            }
+        }
+        if(!flag)
+            cout<<"File doesnot exists!"<<endl;
+    }
+}
+
+void FillingAttributesOfTable(string tableName)
+{
+    attributes_of_table.clear();
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+    string line;
+    while(!SchemaFile.eof())
+    {
+        getline(SchemaFile,line);
+        if(line[0]=='*')
+        {
+            string name = line.substr(1,line.size()-2);
+            if(name==tableName)
+            {
+                getline(SchemaFile,line);//<<
+                getline(SchemaFile,line);//pk: 
+
+                while(line!=">>")
+                {
+                    getline(SchemaFile,line);
+                    if(line==">>")break;
+
+                    string temp="";
+                    int i=0;
+                    while(line[i]!=' ')
+                    {
+                        temp += line[i];
+                        i++;
+                    }
+                    attributes_of_table.push_back(temp);
+                }
+
+                SchemaFile.close();
+                break;
+            }
+        }
+    }
+}
 void Select(vector<string>&Tokens)
 {
     int i=0;
     while(Tokens[i]!="from") i++;
-    i++;
+    i++;//After this increment i will point to Students
 
+    string tableName = Tokens[i];
     //Check whether table with specified name exists in Schema file or not
     {
-        fstream SchemaFile;
-        SchemaFile.open("SchemaFile.txt",ios::in);
-        if(SchemaFile)
+        if(doesTableExists2(tableName))
         {
-            string TableNameInQuery = Tokens[i];
-            string line;
-            bool flag=false;
-            while(!SchemaFile.eof())
-            {
-                getline(SchemaFile,line);
-                if(line[0]=='*')//*Students*
-                {
-                    string name = line.substr(1,line.size()-2);
-                    if(name==TableNameInQuery)
-                    {
-                        flag=true;
-                        SchemaFile.close();
-                        //if control comes here, means the table exists in the Schema File
-                        Helper_Select(Tokens,TableNameInQuery);
-                    }
-                }
-            }
-            if(flag==false)
-                cout<<"<"<<TableNameInQuery<<"> table not found"<<endl;
+            FillingAttributesOfTable(tableName);
+            if(i+1==Tokens.size())
+                Helper_Select(Tokens,tableName);
+            else
+                Helper_Select_Where(Tokens,tableName,i);//i is pointing to Students;
         }
+        else
+            cout<<"table <"<<tableName<<"> table doesn't exists"<<endl;
+        
     }
-      
-
 }
 
 

@@ -1,9 +1,9 @@
-*Teacher*
+*Students*
 <<
-pk: name
+pk: id
 id int
 name varchar 30
-addr varchar 50
-phno int
+dob date
+percent decimal 4 2
 >>
 

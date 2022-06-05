@@ -80,6 +80,8 @@ void HelpCommand(vector<string> Tokens)
         cout<<"Eg -"<<endl;
         cout<<"update Students set percent=90 where percent>90";
     }
+    else
+        cout<<"Invalid Query"<<endl;
     
     cout<<endl;
  } 

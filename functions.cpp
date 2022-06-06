@@ -363,62 +363,11 @@ vector<int> Find_Indices(vector<string>&Tokens,vector<string> attributes_of_tabl
     return indices_of_att_in_query;
 }
 
-//This helper is for NO Where clauses
-void Helper_Select(vector<string>&Tokens,string TableNameInQuery)
-{
-    //select * from Students handled separately
-    if(Tokens[1]=="*")
-    {
-        fstream file;
-        file.open(TableNameInQuery+".txt",ios::in);
-        int attributes = Count_no_Attributes(TableNameInQuery);
-        
-        bool flag=false;
-        string tuple;
-        while(file && !file.eof())
-        {
-            flag=true;
-            getline(file,tuple);//<102,Dipak Yadav,99>
-            if(tuple.size()==0)break;
-
-            for(int i=0;i<attributes;i++)
-                cout<<left<<setw(25)<<ExtractCol(tuple,i);
-            cout<<endl;
-            
-        }
-        if(!flag)
-            cout<<"File doesnot exists!"<<endl;
-    }
-
-    else
-    {
-        vector<int>indices_of_att_in_query = Find_Indices(Tokens,attributes_of_table);
-
-        fstream file;
-        file.open(TableNameInQuery+".txt",ios::in);
-        
-        bool flag=false;
-        string tuple;
-
-        while(file && !file.eof())
-        {
-            flag=true;
-            getline(file,tuple);//<102,Dipak Yadav,99>
-            if(tuple.size()==0)break;
-
-            for(int x:indices_of_att_in_query)
-                cout<<left<<setw(25)<<ExtractCol(tuple,x);
-            cout<<endl;
-            
-        }
-        if(!flag)
-            cout<<"File doesnot exists!"<<endl;
-
-    }
-}
 
 bool is_Where_True(string tuple,vector<string>&Tokens,int i)
 {
+    //cout<<"i:"<<i<<"   Tokens[i]:"<<Tokens[i]<<endl;
+    if(i+1==Tokens.size())return true;
     //i is pointing to Students here;
     i++;//After this inc i will point to where
 
@@ -450,14 +399,15 @@ bool is_Where_True(string tuple,vector<string>&Tokens,int i)
     }
 }
 
-void Helper_Select_Where(vector<string>&Tokens,string TableNameInQuery,int i)
+//Also VALID for where clause;
+void Helper_Select(vector<string>&Tokens,string TableNameInQuery,int i)
 {
     if(Tokens[1]=="*")
     {
         fstream file;
         file.open(TableNameInQuery+".txt",ios::in);
         int attributes = Count_no_Attributes(TableNameInQuery);
-        //cout<<"COUNT of attributes : "<<attributes<<endl;
+        
         bool flag=false;
         string tuple;
         while(file && !file.eof())
@@ -469,14 +419,13 @@ void Helper_Select_Where(vector<string>&Tokens,string TableNameInQuery,int i)
             //cout<<"val:"<<Tokens[i]<<endl;
             if(is_Where_True(tuple,Tokens,i))
             {
-                
                 for(int j=0;j<attributes;j++)
                     cout<<left<<setw(25)<<ExtractCol(tuple,j);
                 cout<<endl;
             }
         }
         if(!flag)
-            cout<<"File doesnot exists!"<<endl;
+            cout<<"No Records yet"<<endl;
     }
 
     else
@@ -497,12 +446,12 @@ void Helper_Select_Where(vector<string>&Tokens,string TableNameInQuery,int i)
             
             if(is_Where_True(tuple,Tokens,i)){
                 for(int x:indices_of_att_in_query)
-                cout<<left<<setw(25)<<ExtractCol(tuple,x);
+                    cout<<left<<setw(25)<<ExtractCol(tuple,x);
                 cout<<endl;
             }
         }
         if(!flag)
-            cout<<"File doesnot exists!"<<endl;
+            cout<<"No Records yet"<<endl;
     }
 }
 
@@ -556,20 +505,193 @@ void Select(vector<string>&Tokens)
         if(doesTableExists2(tableName))
         {
             FillingAttributesOfTable(tableName);
-            if(i+1==Tokens.size())
-                Helper_Select(Tokens,tableName);
-            else
-                Helper_Select_Where(Tokens,tableName,i);//i is pointing to Students;
+            Helper_Select(Tokens,tableName,i);//i is pointing to Students;
         }
         else
             cout<<"table <"<<tableName<<"> table doesn't exists"<<endl;
-        
     }
 }
 
 
+vector<int>GetIndices(string tableName, map<string,string>mpp)
+{
+    FillingAttributesOfTable(tableName);
+    vector<int>ans;
+    
+    for(auto kv=mpp.begin();kv!=mpp.end();kv++)
+    {
+        int count=0;
+        for(auto x:attributes_of_table)
+        {   
+            //cout<<"attr:"<<x<<"     kv:"<<kv->first<<endl;
+            if(kv->first==x)
+                {ans.push_back(count);break;}
+            count++;
+        }
+    }
+    return ans;
+}
+vector<string> split (string s, char delim) {
+    vector<string> result;
+    stringstream ss (s);
+    string item;
+
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
+
+    return result;
+}
 void UpdateTable(vector<string>&Tokens)
 {
+    string tableName = Tokens[1];
+    //Finding position of where in Tokens
+    bool isWhere=false;
+    int i;
+    for( i=3;i<Tokens.size();i++)
+    {   
+        if(Tokens[i]=="where")
+            {isWhere=true;break;}
+    }
+        
+    i--;
+    //Checking if PK is getting updated .. 
+        //  if where is not present
+        //  and yes PK is getting updated, then dont update because each record will get same PK.
     
+    fstream SchemaFile;
+    SchemaFile.open("SchemaFile.txt",ios::in);
+
+    //Reading PK from Schema File
+    string PK_fromSchema="";
+    string line;
+    while(SchemaFile && !SchemaFile.eof())
+    {
+        getline(SchemaFile,line);
+        if(line[0]=='*')//*Students*
+        {
+            if(tableName==line.substr(1,line.size()-2))
+            {
+                getline(SchemaFile,line);//<<
+                getline(SchemaFile,line);//pk: 
+
+                PK_fromSchema = line.substr(4,line.size()-4);
+                SchemaFile.close();
+                break;
+            }
+        }
+    }
+
+
+    //Geting Keys and Values from the Tokens
+    map<string,string> mpp;
+    bool flag=true;
+    
+    for(int i=3;i<Tokens.size();i+=3)
+    {
+        mpp[Tokens[i]] = Tokens[i+2];
+        //cout<<"map:  "<<Tokens[i] <<" : "<< mpp[Tokens[i]]<<endl;
+    }
+            
+    //Checking if PK attribute is being updated or not;
+    for(auto x : mpp)
+        if(x.first==PK_fromSchema)
+            {
+                cout<<"Cannot be Updated, same PK would get set"<<endl;
+                return;
+            }
+        
+    fstream temp;
+    temp.open("temp.txt",ios::out);
+
+    fstream table;
+    table.open(tableName+".txt",ios::in);
+
+    string tuple;
+    vector<int>indices = GetIndices(tableName,mpp);//indices of keys, which we will be updating
+    
+    cout<<endl;
+    FillingAttributesOfTable(tableName);
+
+    while(table && !table.eof())
+    {
+        getline(table,tuple);
+        if(tuple.size()==0)break;
+        vector<string>parsed = split(tuple.substr(1,tuple.size()-2),',');
+        if(is_Where_True(tuple,Tokens,i))
+        {
+            for(int index:indices)
+                parsed[index] = mpp[attributes_of_table[index]];
+        }   
+        temp << "<";
+        for(auto ele:parsed)
+            temp << ele << ",";
+        temp << ">" << endl;
+        
+    }
+    table.close();
+    temp.close();
+
+    char Tname[30];
+    strcpy(Tname, (Tokens[1]+".txt").c_str());
+    remove(Tname);
+    rename("temp.txt",Tname);
+
+}
+
+
+void DeleteFrom(vector<string>&Tokens)
+{
+    
+    //Where Clause not present, 
+        //So delete the table itself..
+        //But don't remove its details from the schema file..
+    if(Tokens.size()==3)
+    {
+        fstream table;
+        table.open(Tokens[2]+".txt",ios::in);
+        string line;
+        int count=0;
+        while(table && !table.eof())
+            {getline(table,line);count++;}
+        table.close();
+        cout<<count-1<<" rows affected"<<endl;
+        char tableName[30];
+        strcpy(tableName, (Tokens[2]+".txt").c_str());
+        remove(tableName);
+        return ;
+    }
+
+    //if control comes here, means where clause is present
+
+    int originalCount=0;
+    int duplicateCount=0;
+
+    FillingAttributesOfTable(Tokens[2]);
+    fstream temp;
+    temp.open("temp.txt",ios::out);
+
+    fstream table;
+    table.open(Tokens[2]+".txt",ios::in);
+
+    string tuple;
+    
+    while(table && !table.eof())
+    {
+        getline(table,tuple);
+        if(tuple.size()==0)break;
+        originalCount++;
+        if(!is_Where_True(tuple,Tokens,2))
+            {temp << tuple <<endl;duplicateCount++;}
+    }
+    table.close();
+    temp.close();
+
+    char tableName[30];
+    strcpy(tableName, (Tokens[2]+".txt").c_str());
+    remove(tableName);
+    rename("temp.txt",tableName);
+
+    cout<<originalCount-duplicateCount<<" rows affected"<<endl;
 }
 

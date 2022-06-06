@@ -1,4 +1,4 @@
-* Enter keywords in queries in lowercase only
+* Queries are made case insensitive
 
 * command should end with semicolon
 

@@ -67,13 +67,20 @@ Schema File :
         Commands for testing : 
             VALID commands :
                 1. create table Students(id int,name varchar(30),dob date, percent decimal(4,2),primary key(id));
-                2.insert into Students values(100,"S Y",24-02-2001,66.3);
-                  insert into Students values(101,"K K",24-02-2001,33.9);
-                  insert into Students values(102,"R J",24-02-2001,88.2);
-                  insert into Students values(103,"S S",24-02-2001,92.4);
-                  insert into Students values(104,"I J",24-02-2001,76.8);
-                  insert into Students values(105,"A K",24-02-2001,57.4);
+                2.insert into Students values(100,"SY",24-02-2001,66.3);
+                  insert into Students values(101,"KK",24-02-2001,33.9);
+                  insert into Students values(102,"RJ",24-02-2001,88.2);
+                  insert into Students values(103,"SS",24-02-2001,92.4);
+                  insert into Students values(108,"KK",24-02-2001,33.9);
+                  insert into Students values(104,"IJ",24-02-2001,76.8);
+                  insert into Students values(105,"AK",24-02-2001,57.4);
+                  
+                  insert into Students values(111,"KK",24-02-2001,33.9);
                 3.select * from Students;
                   select name,id from students where id!=103;
                 4.help create;
                 5.describe hell;
+
+                6. delete from Students where id=104;
+
+                7. update Students set percent=100,name="zz";

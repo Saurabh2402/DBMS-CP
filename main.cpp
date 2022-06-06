@@ -109,14 +109,16 @@ void Execute()
     else if(Tokens[0]=="select")
     {Select(Tokens);}
     
-    else if(Tokens[0]=="delete" && Tokens[1]=="from")
-    {
-        cout<<"== delete from"<<endl;
-    }
     else if(Tokens[0]=="update")
     {
         UpdateTable(Tokens);
     }
+
+    else if(Tokens[0]=="delete" && Tokens[1]=="from")
+    {
+        DeleteFrom(Tokens);
+    }
+    
     else if(Tokens[0]=="quit")
     {
         cout<<"Program terminated successfully."<<endl;
@@ -138,8 +140,8 @@ void cvtIntoSmallerCase()
         if(keywords.find(x)!=keywords.end())
             Tokens[i] = x;
     }
-    
 }
+
 int main()
 {
     system("cls");

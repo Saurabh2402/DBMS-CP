@@ -553,7 +553,6 @@ void UpdateTable(vector<string>&Tokens)
         if(Tokens[i]=="where")
             {isWhere=true;break;}
     }
-        
     i--;
     //Checking if PK is getting updated .. 
         //  if where is not present
@@ -582,24 +581,20 @@ void UpdateTable(vector<string>&Tokens)
         }
     }
 
-
     //Geting Keys and Values from the Tokens
     map<string,string> mpp;
     bool flag=true;
     
     for(int i=3;i<Tokens.size();i+=3)
-    {
         mpp[Tokens[i]] = Tokens[i+2];
-        //cout<<"map:  "<<Tokens[i] <<" : "<< mpp[Tokens[i]]<<endl;
-    }
-            
+                
     //Checking if PK attribute is being updated or not;
     for(auto x : mpp)
         if(x.first==PK_fromSchema)
-            {
-                cout<<"Cannot be Updated, same PK would get set"<<endl;
-                return;
-            }
+        {
+            cout<<"Cannot be Updated, same PK would get set"<<endl;
+            return;
+        }
         
     fstream temp;
     temp.open("temp.txt",ios::out);
@@ -627,8 +622,8 @@ void UpdateTable(vector<string>&Tokens)
         for(auto ele:parsed)
             temp << ele << ",";
         temp << ">" << endl;
-        
     }
+
     table.close();
     temp.close();
 
@@ -636,7 +631,6 @@ void UpdateTable(vector<string>&Tokens)
     strcpy(Tname, (Tokens[1]+".txt").c_str());
     remove(Tname);
     rename("temp.txt",Tname);
-
 }
 
 

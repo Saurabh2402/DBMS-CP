@@ -1,61 +1,23 @@
-* Queries are made case insensitive
+* Keywords of SQL are made case insensitive
 
-* command should end with semicolon
+* command should end with semicolon - else it will display error
 
-* primary key is compulsory
+* defining primary key is compulsory, during create table - if not defined will display error
 
-* Different Files for different tables
+* We are creating Different Files for different tables
 
-create table Students(id int,name varchar2,percentage float);
-
-* SCHEMA FILE : 
-    - Will contain metadata
-
-    - ###
-      Students
-      rollno int
-      name varchar
-      ###
-      Teachers
+* How SCHEMA FILE looks: 
+      *Students*
+      <<
+      pk: id
       id int
-      ###
+      name varchar 30
+      dob date
+      percent decimal 4 2
+      >>
 
-Students.txt
-101 Dipak 98
-102 Shabbir 82
-103 Shabbir 88
-104 Pratahemsh 99
-106 Saurbah 56
-
-select id,name from students;
-
-id = 0
-name = 1
-
-
-2D ARRAY
-0    1   2   3   4      ....
-##c1
-101 103 105 111 120
-##c1
-
-##c2
-Shabbir Saurabh Pratahemsh Shriraj Dipak    
-##c2
-
-##c3
-99 88 54 93 20 
-##c3
-
-
-Insert into students values(109,Raj,50)
-
-
-Teachers.txt
-200 Saurabh
-
-
-select name from students;
-
-
+How the data file(table) of Students.txt will look like -
+    <100,SY,24-02-2001,66.3,>
+    <103,SS,24-02-2001,92.4,>
+    <104,IJ,24-02-2001,76.8,>
 

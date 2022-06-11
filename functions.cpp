@@ -196,7 +196,7 @@ int Count_no_Attributes(string TableName)
 }
 string ExtractCol(string tuple,int colno)//<102,Saurabh Yelmame,24-02-2001>
 {
-    //tuple = <103,Saurabh Yelmame,24-02-2001>
+    //tuple = <103,S Y,24-02-2001>, colno=1, will return SY
     int comma=0;
     int i=1;
     while(comma<colno)

@@ -1,9 +1,9 @@
-*Students*
+*Employee*
 <<
-pk: id
-id int
+pk: empId
+empId int
 name varchar 30
 dob date
-percent decimal 4 2
+salary decimal 7 2
 >>
 

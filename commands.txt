@@ -84,3 +84,30 @@ Schema File :
                 6. delete from Students where id=104;
 
                 7. update Students set percent=100,name="zz";
+
+*******************************************************************************************
+                Employee table
+
+decimal(5,2) : 60000.00
+1. create table Employee(empId int,name varchar(30),dob date,salary decimal(7,2),primary key(empId));
+2. drop table Employee;
+
+3. insert into Employee values(100,"SY",24-02-2001,50000.00);
+   insert into Employee values(101,"KS",21-01-2001,80000.00);
+   insert into Employee values(102,"AM",25-05-2000,57000.70);
+   insert into Employee values(103,"NS",28-09-2004,69000.00);
+   insert into Employee values(104,"RS",24-02-2001,77000.90);
+   insert into Employee values(100,"RS",21-12-1999,50500.00);
+
+4. select * from Employee;
+5. select * from Employee where salary>70000;
+6. select name,salary from Employee where salary>60000;
+
+7. update Employee set salary=50000 where empId=102;
+
+8. delete from Employee where empId=118;
+
+
+9. help create table;
+10.describe Employee; 
+11. quit;

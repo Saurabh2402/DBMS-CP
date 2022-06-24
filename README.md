@@ -2,7 +2,7 @@
 
 Developed a CLI(Command Line) application named - **`DataLite`**.
 
-DataLite is a lite clone to a real DataBase Management System.
+DataLite is a lite clone of a real DataBase Management System.
 
 Users get the result in the same way as they would if the query was executed in a real DataBase Management System.
 
@@ -33,5 +33,7 @@ Users get the result in the same way as they would if the query was executed in 
 -  Different text files are created for storing tuples of different tables.
 -  Also works fine with `where clause in select, update, delete from`
     
+### Assumptions made : 
+- Defining primary key while creating table is mandatory, else error will be raised.
     
  Purpose of developing the software was to learn how complex is a database management system.

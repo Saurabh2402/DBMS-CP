@@ -1,18 +1,46 @@
+* Keywords of SQL are made case insensitive
+
+* command should end with semicolon - else it will display error
+
+* defining primary key is compulsory, during create table - if not defined will display error
+
+* We are creating Different Files for different tables
+
+* How SCHEMA FILE looks: 
+      *Students*
+      <<
+      pk: id
+      id int
+      name varchar 30
+      dob date
+      percent decimal 4 2
+      >>
+
+How the data file(table) of Students.txt will look like -
+    <100,SY,24-02-2001,66.3>
+    <103,SS,24-02-2001,92.4>
+    <104,IJ,24-02-2001,76.8>
+
+
+
+
+
+
 Schema File :
 
-        *Student*
-        <<
-        pk: roll
-        id int
-        name varchar 20
-        percent decimal 4 2
-        >>
+    *Student*
+    <<
+    pk: roll
+    id int
+    name varchar 20
+    percent decimal 4 2
+    >>
 
-        *Teacher*
-        <<
-        id int
-        name varchar 30
-        >>
+    *Teacher*
+    <<
+    id int
+    name varchar 30
+    >>
 
 
 * Commands  :
@@ -86,6 +114,7 @@ Schema File :
                 7. update Students set percent=100,name="zz";
 
 *******************************************************************************************
+                
                 Employee table
 
 decimal(5,2) : 60000.00
@@ -104,6 +133,8 @@ decimal(5,2) : 60000.00
 6. select name,salary from Employee where salary>60000;
 
 7. update Employee set salary=50000 where empId=102;
+        SHOW the rows affected...
+
 
 8. delete from Employee where empId=118;
 

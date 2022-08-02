@@ -117,9 +117,11 @@ Schema File :
                 
                 Employee table
 
-decimal(5,2) : 60000.00
+decimal(7,2) : 60000.00
 1. create table Employee(empId int,name varchar(30),dob date,salary decimal(7,2),primary key(empId));
-2. drop table Employee;
+2. create table Students(roll int check(roll > 0), name varchar(20) check(name!="ABC"), dob date, percent decimal(4,2), primary key(roll)); 
+
+drop table Employee;
 
 3. insert into Employee values(100,"SY",24-02-2001,50000.00);
    insert into Employee values(101,"KS",21-01-2001,80000.00);

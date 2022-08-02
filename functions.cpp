@@ -607,6 +607,7 @@ void UpdateTable(vector<string>&Tokens)
     
     cout<<endl;
     FillingAttributesOfTable(tableName);
+    int rows_affected=0;
 
     while(table && !table.eof())
     {
@@ -615,6 +616,7 @@ void UpdateTable(vector<string>&Tokens)
         vector<string>parsed = split(tuple.substr(1,tuple.size()-2),',');
         if(is_Where_True(tuple,Tokens,i))
         {
+            rows_affected++;
             for(int index:indices)
                 parsed[index] = mpp[attributes_of_table[index]];
         }   
@@ -631,6 +633,7 @@ void UpdateTable(vector<string>&Tokens)
     strcpy(Tname, (Tokens[1]+".txt").c_str());
     remove(Tname);
     rename("temp.txt",Tname);
+    cout<<rows_affected<<" rows affected"<<endl;
 }
 
 

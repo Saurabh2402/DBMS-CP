@@ -22,8 +22,8 @@ bool doesTableExists(string tableName)
             }
         }
     }
-    else
-        cout<<"Schema File doesn't exists"<<endl;
+    //else
+      //  cout<<"Schema File doesn't exists"<<endl;
     return false;
 }
 

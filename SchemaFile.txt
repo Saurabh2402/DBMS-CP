@@ -7,12 +7,3 @@ dob date
 salary decimal 7 2
 >>
 
-*Students*
-<<
-pk: roll
-roll int check roll > 0
-name varchar 20 check name != ABC
-dob date
-percent decimal 4 2
->>
-

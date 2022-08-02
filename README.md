@@ -1,4 +1,30 @@
-#DataLite
+# DataLite
+## Create Table & Insert into Command:
+
+![This is an image](https://github.com/Saurabh2402/DBMS-CP/blob/main/Images/1.png)
+
+
+## Select Command:
+
+![This is an image](https://github.com/Saurabh2402/DBMS-CP/blob/main/Images/2.png)
+
+
+## Update Command with Where Clause:
+
+![This is an image](https://github.com/Saurabh2402/DBMS-CP/blob/main/Images/3.png)
+
+
+## Delete From Command with Where Clause:
+
+![This is an image](https://github.com/Saurabh2402/DBMS-CP/blob/main/Images/4.png)
+
+
+## Help Command & Describe Command:
+
+![This is an image](https://github.com/Saurabh2402/DBMS-CP/blob/main/Images/5.png)
+
+##
+
 
 Developed a CLI(Command Line) application named - **`DataLite`**.
 
